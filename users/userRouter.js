@@ -1,17 +1,32 @@
 const express = require('express');
-const { getById } = require('./userDb');
 
 const router = express.Router();
 const Users = require('./userDb');
+const Posts = require('../posts/postDb');
+const { del } = require('../data/dbConfig');
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   // do your magic!
+  try {
+    const { name } = req.body;
+    const addUser = await Users.insert({ name });
+    res.json(addUser);
+  } catch (err) {
+    res.json(err.message);
+  }
 });
 
-router.post('/:id/posts', (req, res) => {
-  // do your magic!
-
-});
+// router.post('/:id/posts', async (req, res) => {
+//   // do your magic!
+//   try {
+//     const { id } = req.params;
+//     const { text, postedBy } = req.body;
+//     const addUserPost = await Users.insert({id, text, postedBy});
+//     res.json(addUserPost);
+//   } catch (err) {
+//     res.json(err.message);
+//   }
+// });
 
 router.get('/', async (req, res) => {
   // do your magic!
@@ -31,19 +46,26 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.get('/:id/posts', async (req, res) => {
-  // do your magic!
-    try {
-      const { id } = req.params;
-      const getPostById = await Users.getUserPosts(id);
-      res.json(getPostById);
-    } catch (err){
-      res.json(err.message);
-    }
-});
+// router.get('/:id/posts', async (req, res) => {
+//   // do your magic!
+//   try {
+//     const { id } = req.params;
+//     const getPostById = await Posts.getById(id);
+//     res.json(getPostById);
+//   } catch (err) {
+//     res.json(err.message);
+//   }
+// });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // do your magic!
+  try {
+    const { id } = req.params;
+    const deleteById = await Users.remove(id);
+    res.json(deleteById);
+  } catch (err) {
+    res.json(err.message);
+  }
 });
 
 router.put('/:id', (req, res) => {
