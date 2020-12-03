@@ -68,8 +68,16 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // do your magic!
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const updateById = await Users.update(id, {name});
+    res.json(updateById);
+  } catch (err) {
+    res.json(err.message);
+  }
 });
 
 //custom middleware
