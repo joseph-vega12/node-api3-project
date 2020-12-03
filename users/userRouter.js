@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
   res.json(getUsers);
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateUserId, async (req, res) => {
   // do your magic!
   try {
     const { id } = req.params;
@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
 //   }
 // });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', validateUserId,  async (req, res) => {
   // do your magic!
   try {
     const { id } = req.params;
@@ -67,7 +67,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateUserId,  async (req, res) => {
   // do your magic!
   try {
     const { id } = req.params;
@@ -81,13 +81,28 @@ router.put('/:id', async (req, res) => {
 
 //custom middleware
 
-function validateUserId(req, res, next) {
-  // do your magic!
+async function validateUserId(req, res, next) {
+  // do your magic!  
+  try {
+    const User = await Users.getById(req.params.id);
+    if (!User) {
+      res.status(404).json({ message: 'invalid user id' });
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error retrieving the hub',
+    });
+  }
 }
+// - this middleware will be used for all endpoints that include an `id` parameter in the url (ex: `/api/users/:id` and it should check the database to make sure there is a user with that id. If there is no user with that id return HTTP status code 404 and a useful error message. If a user with that id is found, then let the request continue.
+// - if the `id` parameter is valid, store that user object as `req.user`
+// - if the `id` parameter does not match any user id in the database, respond with status `400` and `{ message: "invalid user id" }`
 
 function validateUser(req, res, next) {
   // do your magic
-    if (Object.keys(req.body).length === 0) {
+    if (Object.keys(req.body.length) === 0) {
       res.status(404).json({ message: 'missing user data'});
     } else if (!req.body.name) {
       res.status(400).json({ message: 'missing required field'});
