@@ -1,4 +1,5 @@
 const express = require('express');
+const { getById } = require('./userDb');
 
 const router = express.Router();
 const Users = require('./userDb');
@@ -12,28 +13,33 @@ router.post('/:id/posts', (req, res) => {
 
 });
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // do your magic!
-  Users.get(req.query)
-    .then(hubs => {
-      res.status(200).json(hubs);
-    })
-    .catch(error => {
-      // log error to server
-      console.log(error);
-      res.status(500).json({
-        message: 'Error retrieving the hubs',
-      });
-    });
+  const getUsers = await Users.get(req.params.body);
+  res.json(getUsers);
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // do your magic!
+  try {
+    const { id } = req.params;
+    const getById = await Users.getById(id);
+    res.json(getById);
+  } catch (err) {
+    res.json(err.message);
+  }
 });
 
-  
-router.get('/:id/posts', (req, res) => {
+
+router.get('/:id/posts', async (req, res) => {
   // do your magic!
+    try {
+      const { id } = req.params;
+      const getPostById = await Users.getUserPosts(id);
+      res.json(getPostById);
+    } catch (err){
+      res.json(err.message);
+    }
 });
 
 router.delete('/:id', (req, res) => {
