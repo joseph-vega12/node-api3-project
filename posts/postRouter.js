@@ -1,9 +1,16 @@
 const express = require('express');
+const Post = require('../posts/postDb');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // do your magic!
+  try {
+        const getPosts = await Post.get(req.body);
+        res.json(getPosts);
+  } catch (err){
+    res.json(error.message);
+  }
 });
 
 router.get('/:id', (req, res) => {
